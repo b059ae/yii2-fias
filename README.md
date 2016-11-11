@@ -25,11 +25,20 @@
 
 Модулю для работы нужно официальное jquery ui расширение (yiisoft/yii2-jui).
 
-Установка 321
+Установка
 -------------------
-Установить модуль с помощью композера:
+Установить модуль с помощью композера, внести изменения в composer.json:
 ````
-    composer require solbianca/yii2-fias "dev-master"
+    "repositories":
+        [
+            {
+                "type": "vcs",
+                "url": "https://github.com/b059ae/yii2-fias"
+            }
+        ],
+    "require": {
+        "solbianca/yii2-fias": "dev-dev"
+    }
 ````
 
  Применить миграции:
