@@ -17,15 +17,16 @@ class FiasController extends Controller
      * If given parameter $file is null try to download full file, else try to use given file.
      *
      * @param string|null $file
+     * @param int|null $versionId
      * @throws Exception
      * @throws \Exception
      * @throws \yii\db\Exception
      */
-    public function actionInstall($file = null)
+    public function actionInstall($file = null, $versionId = null)
     {
         $loader = $this->getLoader();
 
-        return (new ImportModel($loader, $file))->run();
+        return (new ImportModel($loader, $file, ['versionId'=>$versionId]))->run();
     }
 
     /**

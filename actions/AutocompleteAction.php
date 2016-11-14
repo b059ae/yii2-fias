@@ -10,6 +10,6 @@ class AutocompleteAction extends \yii\base\Action
     public function run()
     {
         $model = new SearchAddress();
-        return Json::encode($model->searchAddress(Yii::$app->request->queryParams));
+        return Json::encode($model->searchAddress(Yii::$app->request->post()));
     }
 }

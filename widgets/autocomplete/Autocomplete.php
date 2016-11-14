@@ -13,14 +13,8 @@ class Autocomplete extends Widget
      *
      * @var string
      */
-    private $urlAddressObject = '/fias/search/autocomplete';
+    public $url = '/fias/search/autocomplete';
 
-    /**
-     * URL to provide autocomplete
-     *
-     * @var string
-     */
-    private $urlHouse = '/fias/search/autocomplete';
 
     /**
      * @inherit
@@ -31,8 +25,7 @@ class Autocomplete extends Widget
     {
         return $this->render('index',
             [
-                'urlAddressObject' => $this->urlAddressObject,
-                'urlHouse' => $this->urlHouse,
+                'urlAddressObject' => $this->url,
                 'regions' => $this->getRegions()
             ]
         );

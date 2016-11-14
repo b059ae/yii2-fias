@@ -16,7 +16,7 @@ class m160711_062538_fias_tables extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%fias_house}}', [
+       /* $this->createTable('{{%fias_house}}', [
             'id' => $this->char(36)->notNull()->comment('Идентификационный код записи'),
             'house_id' => $this->char(36)->notNull()->comment('Идентификационный код дома'),
             'address_id' => $this->char(36)->comment('Идентификационный код адресного объекта'),
@@ -31,7 +31,7 @@ class m160711_062538_fias_tables extends Migration
         ], $tableOptions);
 
         $this->addPrimaryKey('pk', '{{%fias_house}}', 'id');
-        $this->createIndex('house_address_id_fkey_idx', '{{%fias_house}}', 'address_id');
+        $this->createIndex('house_address_id_fkey_idx', '{{%fias_house}}', 'address_id');*/
 
         $this->createTable('{{%fias_address_object}}', [
             'id' => $this->char(36)->notNull()->comment('Идентификационный код записи'),
@@ -58,16 +58,16 @@ class m160711_062538_fias_tables extends Migration
             'ifnsfl' => $this->integer()->comment('Код ИФНС ФЛ')
         ], $tableOptions);
 
-        $this->addPrimaryKey('pk', '{{%fias_address_object}}', 'id');
+        /*$this->addPrimaryKey('pk', '{{%fias_address_object}}', 'id');
         $this->createIndex('address_object_parent_id_fkey_idx', '{{%fias_address_object}}', 'parent_id');;
-        $this->createIndex('address_object_title_lower_idx', '{{%fias_address_object}}', 'title');
+        $this->createIndex('address_object_title_lower_idx', '{{%fias_address_object}}', 'title');*/
 
         $this->createTable('{{%fias_address_object_level}}', [
             'title' => $this->string()->comment('Описание уровня'),
             'code' => $this->string()->comment('Код уровня'),
         ], $tableOptions);
 
-        $this->addPrimaryKey('pk', '{{%fias_address_object_level}}', ['title', 'code']);
+        /*$this->addPrimaryKey('pk', '{{%fias_address_object_level}}', ['title', 'code']);*/
 
         $this->createTable('{{%fias_update_log}}', [
             'id' => $this->primaryKey(),
@@ -82,15 +82,15 @@ class m160711_062538_fias_tables extends Migration
 
         $this->addPrimaryKey('pk', '{{%fias_region}}', 'id');
 
-        $this->addForeignKey('houses_parent_id_fkey', '{{%fias_house}}', 'address_id', '{{%fias_address_object}}',
-            'address_id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}', 'parent_id',
-            '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE');
+        /*$this->addForeignKey('houses_parent_id_fkey', '{{%fias_house}}', 'address_id', '{{%fias_address_object}}',
+            'address_id', 'CASCADE', 'CASCADE');*/
+        /*$this->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}', 'parent_id',
+            '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE');*/
     }
 
     public function down()
     {
-        $this->dropTable('{{%fias_house}}');
+        /*$this->dropTable('{{%fias_house}}');*/
         $this->dropTable('{{%fias_address_object}}');
         $this->dropTable('{{%fias_address_object_level}}');
         $this->dropTable('{{%fias_update_log}}');

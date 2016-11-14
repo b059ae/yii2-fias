@@ -18,21 +18,15 @@ $js = <<<EOD
 var autocomplete = {
 
     'config' : {
-        'urlAddressObject': '{$urlAddressObject}',
-        'urlHouse': '{$urlHouse}',
-        'container' : $('#form-address'),
-        'streetInput': '#form-street',
-        'streetIdInput': '#form-street-id',
-        'houseInput': '#form-house',
+        'url': '{$urlAddressObject}',
+        'container': '#form-address',
+        'input': '.fias-input',
+        'minLength': 3,   
     },
-
     'events': function() {
-        $(autocomplete.config.streetInput).keyup(function(event) {
-            autocomplete.getAddresses(autocomplete.config.urlAddressObject ,autocomplete.getFormData(), 'street');
-        });
-
-        $(autocomplete.config.houseInput).keyup(function(event) {
-            autocomplete.getAddresses(autocomplete.config.urlHouse, autocomplete.getFormData(), 'house');
+        $(autocomplete.config.input).keyup(function(event) {
+            var th = this;
+            autocomplete.getAddresses(autocomplete.config.url, autocomplete.getFormData(), $(this).data('type'), th);
         });
     },
 
@@ -47,10 +41,12 @@ var autocomplete = {
         return $(autocomplete.config.container).serializeArray();
     },
 
-    'getAddresses': function(url, formData, type) {
+    'getAddresses': function(url, formData, type, th) { 
+
+        formData[formData.length] = {name: "type", value: type};
         var request = $.ajax({
             url: url,
-            method: "GET",
+            method: "POST",
             data: formData,
             dataType: "json"
         });
@@ -62,11 +58,7 @@ var autocomplete = {
                 return null;
             }
 
-            if (type === 'street') {
-                autocomplete.initStreetAutocomplete(respond.data);
-            } else if (type === 'house') {
-                autocomplete.initHouseAutocomplete(respond.data);
-            }
+            autocomplete.initAutocomplete(respond.data, th);
         });
 
         request.fail(function( jqXHR, textStatus ) {
@@ -74,24 +66,17 @@ var autocomplete = {
         });
     },
 
-    'initStreetAutocomplete': function(data) {
-        $(autocomplete.config.streetInput).autocomplete({
+    'initAutocomplete': function(data, th) {
+        $(th).autocomplete({
             minLength: 3,
             source: data,
             select: function( event, ui ) {
-                $(autocomplete.config.streetInput).val( ui.item.value );
-                $(autocomplete.config.streetIdInput).val( ui.item.address_id );         
+                $(th).val(ui.item.value);
+                $('#'+$(th).attr('id')+'-id').val(ui.item.id);
                 return false;
             }
         });
     },
-
-    'initHouseAutocomplete': function(data) {
-        $(autocomplete.config.houseInput).autocomplete({
-            minLength: 0,
-            source: data
-        });
-    }
 };
 autocomplete.init();
 EOD;
@@ -104,17 +89,17 @@ $this->registerJs($js);
 
     <div class="form-group">
         <label for="form-region">Регион</label>
-        <?= Html::dropDownList('region', 77, $regions, ['class' => 'form-control', 'if' => 'form-region']) ?>
+        <?= Html::dropDownList('region', 77, $regions, ['class' => 'form-control', 'id' => 'form-region']) ?>
     </div>
-
+    <div class="form-group">
+        <label for="form-street">Город</label>
+        <?= Html::textInput('city', null, ['class' => 'form-control fias-input', 'id' => 'form-city', 'data-type' => 'city']) ?>
+        <?= Html::hiddenInput('city_id', null, ['id' => 'form-city-id']) ?>
+    </div>
     <div class="form-group">
         <label for="form-street">Улица</label>
-        <?= Html::textInput('street', null, ['class' => 'form-control address-form', 'id' => 'form-street']) ?>
+        <?= Html::textInput('street', null, ['class' => 'form-control fias-input', 'id' => 'form-street', 'data-type' => 'street']) ?>
         <?= Html::hiddenInput('address_id', null, ['id' => 'form-street-id']) ?>
-    </div>
-    <div class="form-group">
-        <label for="form-house">Номер дома</label>
-        <?= Html::textInput('house', null, ['class' => 'form-control address-form', 'id' => 'form-house']) ?>
     </div>
 
 <?php ActiveForm::end() ?>

@@ -15,9 +15,9 @@ class m160714_090446_fsn_regions_codes extends Migration
         $this->renameColumn('{{%fias_address_object}}', 'region', 'region_code');
         $this->renameColumn('{{%fias_region}}', 'id', 'code');
 
-        $this->createIndex('region_code', '{{%fias_address_object}}', 'region_code');
+        /*$this->createIndex('region_code', '{{%fias_address_object}}', 'region_code');
         $this->addForeignKey('fk_region_code_ref_fias_region', '{{%fias_address_object}}', 'region_code',
-            '{{%fias_region}}', 'code', 'NO ACTION', 'NO ACTION');
+            '{{%fias_region}}', 'code', 'NO ACTION', 'NO ACTION');*/
 
         $regions = [
             '01' => 'Республика Адыгея (Адыгея)',
@@ -121,8 +121,8 @@ class m160714_090446_fsn_regions_codes extends Migration
 
     public function down()
     {
-        $this->dropForeignKey('fk_region_code_ref_fias_region', '{{%fias_address_object}}');
-        $this->dropIndex('region_code', '{{%fias_address_object}}');
+        /*$this->dropForeignKey('fk_region_code_ref_fias_region', '{{%fias_address_object}}');
+        $this->dropIndex('region_code', '{{%fias_address_object}}');*/
 
         $this->renameColumn('{{%fias_address_object}}', 'region_code', 'region');
         $this->renameColumn('{{%fias_region}}', 'code', 'id');

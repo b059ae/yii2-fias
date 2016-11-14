@@ -36,7 +36,6 @@ use solbianca\fias\console\traits\ImportModelTrait;
  * @property FiasAddressObjectLevel $addressLevel
  * @property FiasAddressObject $parent
  * @property FiasAddressObject[] $fiasAddressObjects
- * @property FiasHouse[] $fiasHouses
  */
 class FiasAddressObject extends ActiveRecord implements FiasModelInterface
 {
@@ -204,11 +203,23 @@ class FiasAddressObject extends ActiveRecord implements FiasModelInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFiasHouses()
+/*    public function getFiasHouses()
     {
         return $this->hasMany(FiasHouse::className(), ['address_id' => 'address_id']);
-    }
+    }*/
 
+    /**
+     * Получить неполный адрес
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        $address = $this->replaceTitle();
+        $addresses = explode(';', $address);
+        return implode(', ', $addresses);
+    }
+    
     /**
      * Get full address for adres objecr
      *

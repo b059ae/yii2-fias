@@ -10,32 +10,46 @@ use yii\data\ActiveDataProvider;
 
 class SearchAddress extends Model
 {
+
     /**
      * @var int
      */
     public $region;
-
+    /**
+     * @var string
+     */
+    public $city;
+    /**
+     * @var string
+     */
+    public $city_id;
     /**
      * @var string
      */
     public $street;
-
     /**
      * @var string
      */
-    public $address_id;
-
+    public $street_id;
     /**
      * @var string
      */
-    public $house;
+    public $type;
 
     /**
-     * Поиск по улицам и улицам на дополнительных территориях
+     * Поиск по городам
      *
      * @var array
      */
-    protected $levels = [7, 91];
+    const LEVEL_CITY = [1, 4];
+    /**
+     * Поиск улицам и улицам на дополнительных территориях
+     *
+     * @var array
+     */
+    const LEVEL_STREET = [7, 91];
+
+    public $limit = 10;
 
     /**
      * @inheritdoc
@@ -43,7 +57,8 @@ class SearchAddress extends Model
     public function rules()
     {
         return [
-            [['address_id', 'house', 'street'], 'string'],
+            [['type'], 'required'],
+            [['city', 'city_id', 'street',], 'string'],
             [['region'], 'integer'],
         ];
     }
@@ -53,73 +68,114 @@ class SearchAddress extends Model
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
     /**
+     * Поиск города и улицы
      * @param $params
      * @return array
      */
     public function searchAddress($params)
     {
-        if (!empty($params['house'])) {
-            $dataProvider = $this->searchHouse($params);
-            $models = $dataProvider->getModels();
-            if (empty($models)) {
-                return ['result' => true, 'data' => null];
-            }
+        $this->load($params, '');
 
-            foreach ($models as $model) {
-                $data[] = $model->getFullNumber();
-            }
-            return ['result' => true, 'data' => $data];
-        } elseif (!empty($params['street'])) {
-            $dataProvider = $this->searchAddressObject($params);
-            $models = $dataProvider->getModels();
-            if (empty($models)) {
+        switch ($this->type) {
+            case 'street':
+                $dataProvider = $this->searchStreet($this->region, $this->city_id, $this->street);
+                $models = $dataProvider->getModels();
+                break;
+            case 'city':
+                $dataProvider = $this->searchCity($this->region, $this->city);
+                $models = $dataProvider->getModels();
+                break;
+            default:
                 return ['result' => true, 'data' => null];
-            }
-
-            foreach ($models as $model) {
-                $data[] = [
-                    'value' => $model->getFullAddress(),
-                    'address_id' => $model->address_id
-                ];
-            }
-            return ['result' => true, 'data' => $data];
         }
 
-        return ['result' => true, 'data' => null];
+        if (empty($models)) {
+            return ['result' => true, 'data' => null];
+        }
+        /** @var FiasAddressObject $model */
+        foreach ($models as $model) {
+            $data[] = [
+                'value' => $model->getAddress(),
+                'id' => $model->address_id
+            ];
+        }
+        return ['result' => true, 'data' => $data];
     }
 
     /**
-     * @param $params
+     * Поиск города
+     * @param integer $region_code
+     * @param string $city
      * @return ActiveDataProvider
      */
-    protected function searchAddressObject($params)
+    public function searchCity($region_code, $city)
     {
-        $query = FiasAddressObject::find()->where(['IN', 'address_level', $this->levels]);
+        $query = FiasAddressObject::find()->where(['IN', 'address_level', static::LEVEL_CITY]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        $this->load($params, '');
-
-        if (!$this->validate()) {
+        if (empty($region_code) || empty($city)) {
             return $dataProvider;
         }
 
         $query->andFilterWhere([
-            'region_code' => $this->region,
+            'region_code' => $region_code,
+        ]);
+        $query->andFilterWhere([
+            'LIKE',
+            'title',
+            $city
+        ]);
+
+        $query->andFilterWhere([
+            '!=',
+            'prefix',
+            'обл'
+        ]);
+
+        $query->limit($this->limit);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Поиск улицы
+     * @param integer $region_code
+     * @param string $city_id
+     * @param string $street
+     * @return ActiveDataProvider
+     */
+    public function searchStreet($region_code, $city_id, $street)
+    {
+        $query = FiasAddressObject::find()->where(['IN', 'address_level', static::LEVEL_STREET]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        if (empty($region_code) || empty($city_id) || empty($street)) {
+            return $dataProvider;
+        }
+
+        $query->andWhere(['parent_id' => $city_id]);
+
+        $query->andFilterWhere([
+            'region_code' => $region_code,
         ]);
 
         $query->andFilterWhere([
             'LIKE',
             'title',
-            $this->street
+            $street
         ]);
+
+        $query->limit($this->limit);
 
         return $dataProvider;
     }
@@ -128,7 +184,7 @@ class SearchAddress extends Model
      * @param $params
      * @return ActiveDataProvider
      */
-    protected function searchHouse($params)
+    /*protected function searchHouse($params)
     {
         $query = FiasHouse::find();
 
@@ -151,5 +207,5 @@ class SearchAddress extends Model
         ]);
 
         return $dataProvider;
-    }
+    }*/
 }

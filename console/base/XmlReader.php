@@ -34,7 +34,7 @@ class XmlReader
         }
     }
 
-    public function getRows($maxCount = 1000)
+    public function getRows($maxCount = 10000)
     {
         $this->ensureMaxCountIsValid($maxCount);
 

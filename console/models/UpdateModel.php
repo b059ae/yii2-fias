@@ -10,7 +10,7 @@ use Yii;
 use solbianca\fias\console\base\XmlReader;
 use yii\helpers\Console;
 use solbianca\fias\models\FiasUpdateLog;
-use solbianca\fias\models\FiasHouse;
+//use solbianca\fias\models\FiasHouse;
 use solbianca\fias\models\FiasAddressObject;
 
 class UpdateModel extends BaseModel
@@ -71,7 +71,7 @@ class UpdateModel extends BaseModel
 
             $this->updateAddressObject();
 
-            $this->updateHouse();
+            /*$this->updateHouse();*/
 
             $this->saveLog();
 
@@ -87,7 +87,7 @@ class UpdateModel extends BaseModel
     {
         Console::output('Удаление данных.');
 
-        $deletedHouseFile = $this->directory->getDeletedHouseFile();
+        /*$deletedHouseFile = $this->directory->getDeletedHouseFile();
         if ($deletedHouseFile) {
             Console::output("Удаление записей из таблицы " . FiasHouse::tableName() . ".");
             FiasHouse::remove(new XmlReader(
@@ -96,7 +96,7 @@ class UpdateModel extends BaseModel
                 array_keys(FiasHouse::getXmlAttributes()),
                 FiasHouse::getXmlFilters()
             ));
-        }
+        }*/
 
         $deletedAddressObjectsFile = $this->directory->getDeletedAddressObjectFile();
         if ($deletedAddressObjectsFile) {
@@ -125,7 +125,7 @@ class UpdateModel extends BaseModel
         ), $attributes);
     }
 
-    private function updateHouse()
+   /* private function updateHouse()
     {
         Console::output('Обновление домов');
 
@@ -138,5 +138,5 @@ class UpdateModel extends BaseModel
             array_keys($attributes),
             FiasHouse::getXmlFilters()
         ), $attributes);
-    }
+    }*/
 }

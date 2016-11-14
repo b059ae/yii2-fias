@@ -77,10 +77,10 @@ class Directory
      * @return string
      * @throws Exception
      */
-    public function getHouseFile()
+    /*public function getHouseFile()
     {
         return $this->directoryPath . '/' . $this->find('AS_HOUSE_');
-    }
+    }*/
 
     /**
      * @return string
