@@ -177,8 +177,9 @@ class ImportModel extends BaseModel
 
         Console::output('Добавляем индексы.');
         Yii::$app->getDb()->createCommand()->createIndex('address_object_parent_id_fkey_idx', '{{%fias_address_object}}', 'parent_id');
+        Yii::$app->getDb()->createCommand()->createIndex('address_object_parent_id_title_fkey_idx', '{{%fias_address_object}}', 'parent_id, title');
         Yii::$app->getDb()->createCommand()->createIndex('address_object_title_lower_idx', '{{%fias_address_object}}', 'title');
-        Yii::$app->getDb()->createCommand()->createIndex('region_code', '{{%fias_address_object}}', 'region_code');
+        Yii::$app->getDb()->createCommand()->createIndex('region_code_idx', '{{%fias_address_object}}', 'region_code');
         Yii::$app->getDb()->createCommand()->createIndex('address_object_level_region_title_idx', '{{%fias_address_object}}', 'address_level, region_code, title');
         /*Yii::$app->getDb()->createCommand()->createIndex('region_code', '{{%fias_address_object}}',
             'region_code')->execute();
