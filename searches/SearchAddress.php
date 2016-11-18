@@ -82,12 +82,12 @@ class SearchAddress extends Model
 
         switch ($this->type) {
             case 'street':
-                $dataProvider = $this->searchStreet($this->region, $this->city_id, $this->street);
-                $models = $dataProvider->getModels();
+                $models = $this->searchStreet($this->region, $this->city_id, $this->street);
+                /*$models = $dataProvider->getModels();*/
                 break;
             case 'city':
-                $dataProvider = $this->searchCity($this->region, $this->city);
-                $models = $dataProvider->getModels();
+                $models = $this->searchCity($this->region, $this->city);
+                /*$models = $dataProvider->getModels();*/
                 break;
             default:
                 return ['result' => true, 'data' => null];
@@ -116,12 +116,12 @@ class SearchAddress extends Model
     {
         $query = FiasAddressObject::find()->where(['IN', 'address_level', static::LEVEL_CITY]);
 
-        $dataProvider = new ActiveDataProvider([
+        /*$dataProvider = new ActiveDataProvider([
             'query' => $query,
-        ]);
+        ]);*/
 
         if (empty($region_code) || empty($city)) {
-            return $dataProvider;
+            return [];
         }
 
         $query->andFilterWhere([
@@ -130,7 +130,8 @@ class SearchAddress extends Model
         $query->andFilterWhere([
             'LIKE',
             'title',
-            $city
+            $city.'%',
+            false
         ]);
 
         $query->andFilterWhere([
@@ -141,7 +142,9 @@ class SearchAddress extends Model
 
         $query->limit($this->limit);
 
-        return $dataProvider;
+        return $query->all();
+
+//        return $dataProvider;
     }
 
     /**
@@ -155,12 +158,12 @@ class SearchAddress extends Model
     {
         $query = FiasAddressObject::find()->where(['IN', 'address_level', static::LEVEL_STREET]);
 
-        $dataProvider = new ActiveDataProvider([
+ /*       $dataProvider = new ActiveDataProvider([
             'query' => $query,
-        ]);
+        ]);*/
 
         if (empty($region_code) || empty($city_id) || empty($street)) {
-            return $dataProvider;
+            return [];
         }
 
         $query->andWhere(['parent_id' => $city_id]);
@@ -172,12 +175,14 @@ class SearchAddress extends Model
         $query->andFilterWhere([
             'LIKE',
             'title',
-            $street
+            $street.'%',
+            false
         ]);
 
         $query->limit($this->limit);
 
-        return $dataProvider;
+        return $query->all();
+        //return $dataProvider;
     }
 
     /**
