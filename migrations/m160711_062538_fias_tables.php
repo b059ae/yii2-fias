@@ -58,16 +58,18 @@ class m160711_062538_fias_tables extends Migration
             'ifnsfl' => $this->integer()->comment('Код ИФНС ФЛ')
         ], $tableOptions);
 
-        /*$this->addPrimaryKey('pk', '{{%fias_address_object}}', 'id');
-        $this->createIndex('address_object_parent_id_fkey_idx', '{{%fias_address_object}}', 'parent_id');;
-        $this->createIndex('address_object_title_lower_idx', '{{%fias_address_object}}', 'title');*/
+        $this->addPrimaryKey('pk', '{{%fias_address_object}}', 'id');
+        $this->createIndex('address_object_parent_id_fkey_idx', '{{%fias_address_object}}', 'parent_id');
+        $this->createIndex('address_object_parent_id_title_fkey_idx', '{{%fias_address_object}}', 'parent_id, title');
+        $this->createIndex('address_object_title_lower_idx', '{{%fias_address_object}}', 'title');
+        
 
         $this->createTable('{{%fias_address_object_level}}', [
             'title' => $this->string()->comment('Описание уровня'),
             'code' => $this->string()->comment('Код уровня'),
         ], $tableOptions);
 
-        /*$this->addPrimaryKey('pk', '{{%fias_address_object_level}}', ['title', 'code']);*/
+        $this->addPrimaryKey('pk', '{{%fias_address_object_level}}', ['title', 'code']);
 
         $this->createTable('{{%fias_update_log}}', [
             'id' => $this->primaryKey(),
@@ -84,8 +86,8 @@ class m160711_062538_fias_tables extends Migration
 
         /*$this->addForeignKey('houses_parent_id_fkey', '{{%fias_house}}', 'address_id', '{{%fias_address_object}}',
             'address_id', 'CASCADE', 'CASCADE');*/
-        /*$this->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}', 'parent_id',
-            '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE');*/
+        $this->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}', 'parent_id',
+            '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE');
     }
 
     public function down()

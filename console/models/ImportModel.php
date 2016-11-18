@@ -59,6 +59,8 @@ class ImportModel extends BaseModel
     {
         try {
             Yii::$app->getDb()->createCommand('SET foreign_key_checks = 0;')->execute();
+            Yii::$app->getDb()->createCommand('SET autocommit = 0;')->execute();
+            Yii::$app->getDb()->createCommand('SET unique_checks = 0;')->execute();
 
             /*$this->dropIndexes();*/
 
@@ -68,10 +70,12 @@ class ImportModel extends BaseModel
 
             /*$this->importHouse();*/
 
-            $this->addIndexes();
+            /*$this->addIndexes();*/
 
             $this->saveLog();
 
+            Yii::$app->getDb()->createCommand('SET unique_checks = 1;')->execute();
+            Yii::$app->getDb()->createCommand('SET autocommit = 1;')->execute();
             Yii::$app->getDb()->createCommand('SET foreign_key_checks = 1;')->execute();
         } catch (\Exception $e) {
             throw $e;
@@ -136,30 +140,34 @@ class ImportModel extends BaseModel
     /**
      * Сбрсываем индексыдля табоиц даееых фиас
      */
-    /*protected function dropIndexes()
+    protected function dropIndexes()
     {
         Console::output('Сбрасываем индексы и ключи.');
 
         Console::output('Сбрасываем внешние ключи.');
-        Yii::$app->getDb()->createCommand()->dropForeignKey('houses_parent_id_fkey', '{{%fias_house}}')->execute();
+//        Yii::$app->getDb()->createCommand()->dropForeignKey('houses_parent_id_fkey', '{{%fias_house}}')->execute();
         Yii::$app->getDb()->createCommand()->dropForeignKey('address_object_parent_id_fkey',
             '{{%fias_address_object}}')->execute();
         Yii::$app->getDb()->createCommand()->dropForeignKey('fk_region_code_ref_fias_region',
             '{{%fias_address_object}}')->execute();
 
         Console::output('Сбрасываем индексы.');
-        Yii::$app->getDb()->createCommand()->dropIndex('region_code', '{{%fias_address_object}}')->execute();
-        Yii::$app->getDb()->createCommand()->dropIndex('house_address_id_fkey_idx', '{{%fias_house}}')->execute();
+        Yii::$app->getDb()->createCommand()->dropIndex('region_code_idx', '{{%fias_address_object}}')->execute();
+//        Yii::$app->getDb()->createCommand()->dropIndex('house_address_id_fkey_idx', '{{%fias_house}}')->execute();
         Yii::$app->getDb()->createCommand()->dropIndex('address_object_parent_id_fkey_idx',
+            '{{%fias_address_object}}')->execute();
+        Yii::$app->getDb()->createCommand()->dropIndex('address_object_parent_id_title_fkey_idx',
             '{{%fias_address_object}}')->execute();
         Yii::$app->getDb()->createCommand()->dropIndex('address_object_title_lower_idx',
             '{{%fias_address_object}}')->execute();
+        Yii::$app->getDb()->createCommand()->dropIndex('address_object_level_region_title_idx',
+            '{{%fias_address_object}}')->execute();
 
         Console::output('Сбрасываем основные ключи.');
-        Yii::$app->getDb()->createCommand()->dropPrimaryKey('pk', '{{%fias_house}}')->execute();
+//        Yii::$app->getDb()->createCommand()->dropPrimaryKey('pk', '{{%fias_house}}')->execute();
         Yii::$app->getDb()->createCommand()->dropPrimaryKey('pk', '{{%fias_address_object}}')->execute();
         Yii::$app->getDb()->createCommand()->dropPrimaryKey('pk', '{{%fias_address_object_level}}')->execute();
-    }*/
+    }
 
     /**
      * Устанавливаем индексы для таблиц данных фиас
@@ -194,9 +202,6 @@ class ImportModel extends BaseModel
         Console::output('Добавляем внешние ключи');
         Yii::$app->getDb()->createCommand()->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}', 'parent_id',
             '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE');
-        Yii::$app->getDb()->createCommand()->addForeignKey('address_object_parent_id_fkey', '{{%fias_address_object}}',
-            'parent_id',
-            '{{%fias_address_object}}', 'address_id', 'CASCADE', 'CASCADE')->execute();
         Yii::$app->getDb()->createCommand()->addForeignKey('fk_region_code_ref_fias_region', '{{%fias_address_object}}',
             'region_code',
             '{{%fias_region}}', 'code', 'NO ACTION', 'NO ACTION')->execute();
