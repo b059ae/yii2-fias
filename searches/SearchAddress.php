@@ -130,14 +130,19 @@ class SearchAddress extends Model
         $query->andFilterWhere([
             'LIKE',
             'title',
-            $city.'%',
-            false
+            $city/*.'%',
+            false*/
         ]);
 
         $query->andFilterWhere([
-            '!=',
+            'NOT IN',
             'prefix',
-            'обл'
+            [
+                'обл',
+                'край',
+                'АО',
+                'респ'
+            ]
         ]);
 
         $query->limit($this->limit);
@@ -175,8 +180,8 @@ class SearchAddress extends Model
         $query->andFilterWhere([
             'LIKE',
             'title',
-            $street.'%',
-            false
+            $street/*.'%',
+            false*/
         ]);
 
         $query->limit($this->limit);
